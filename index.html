@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test JWT index - Postbird</title>
+    <link href="http://cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+    <script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+    <script src="http://cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="page-header">
+            <h2>Test Jwt by jquery.</h2>
+        </div>
+        <div class="page-header">
+            <h3>Simulate user login to get Token</h3>
+        </div>
+        <div class="col-md-12">
+             <div class="col-md-6">
+                <div class="form-group">
+                    <label for="url">Url of check user info.</label>
+                    <input type="text" class="form-control" id="url" placeholder="the url for check user ...">
+                </div>
+                 <div class="form-group">
+                    <label for="name">Test username.</label>
+                    <input type="text" class="form-control" id="name" placeholder="test username ...">
+                 </div>
+                 <div class="form-group">
+                    <label for="password">Test user password.</label>
+                    <input type="text" class="form-control" id="password" placeholder="test password ...">
+                 </div>
+                 <div class="form-group text-right">
+                    <button type="button" onclick="getToken()" class="btn btn-default">GetToken ></button>
+                </div>
+            </div>
+            <div class="col-md-6 ">
+                <strong>Token is </strong>
+                <div class="well" id="tokenWell" style="overflow-wrap: break-word;">
+                </div>
+                <button class="btn btn-warning" onclick="{$('#tokenWell').html('');}">Clear</button>
+            </div>
+        </div>
+        <div class="page-header">
+            <h3>Simulate user actions to verify token</h3>
+        </div>
+        <div class="col-md-12">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="url">Url of user action.</label>
+                    <input type="text" class="form-control" id="actionUrl" placeholder="the url of user action ...">
+                </div>
+                <div class="form-group">
+                    <label for="">Token.</label>
+                    <input type="text" class="form-control" id="token" placeholder="The token from the above ...">
+                </div>
+                <div class="form-group">
+                    <label for="">Username in token.</label>
+                    <input type="text" class="form-control" id="tokenUsername" placeholder="Username in token. ...">
+                </div>
+                <div class="form-group">
+                    <label for="">Test Message.</label>
+                    <input type="text" class="form-control" id="testMessage" placeholder="test message ...">
+                </div>
+                <div class="form-group text-right">
+                    <button type="button" onclick="verifyToken()" class="btn btn-default">Verify Token ></button>
+                </div>
+            </div>
+            <div class="col-md-6 ">
+                <strong>Message </strong>
+                <div class="well" id="checkMessageWell" style="overflow-wrap: break-word;">
+                </div>
+                <button class="btn btn-warning" onclick="{$('#checkMessageWell').html('');}">Clear</button>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    function getToken(){
+        var url=$("#url").val(),
+            name=$("#name").val(),
+            password=$("#password").val();
+        $.ajax({
+            'url':url,
+            'dataType':'json',
+            'type':'post',
+            'data':'name='+name+"&password="+password,
+            success:function(data){
+                if(data.code==0){
+                    $("#tokenWell").html(data.data['token']);
+                }else{
+                    alert(data.msg);
+                }
+            }
+        });
+    }
+    function verifyToken(){
+        var url=$("#actionUrl").val(),
+            token=$("#token").val(),
+            message=$("#testMessage").val(),
+            username=$("#tokenUsername").val();
+        $.ajax({
+            'url':url,
+            'dataType':'json',
+            'type':'post',
+            'beforeSend':function(request) {
+                request.setRequestHeader("Authorization", token);
+            },
+            'data':'message='+message+"&name="+username,
+            success:function(data){
+                if(data.code==0){
+                    $("#checkMessageWell").html(data.data['message']);
+                }else{
+                    alert(data.msg);
+                }
+            }
+        });
+    }
+</script>
+</html>
