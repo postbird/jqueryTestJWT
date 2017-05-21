@@ -9,6 +9,4 @@ lcobucci/jwt
 
 something still writing
 
-- 2017-05-19
-
-- 2017-05-20
+- 2017-05-21
